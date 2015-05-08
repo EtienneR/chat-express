@@ -4,7 +4,13 @@
     <title>Socket.IO chat</title>
     <style>
       * { margin: 0; padding: 0; box-sizing: border-box; }
+      ul li { list-style-type: none;}
       body { font: 13px Helvetica, Arial; }
+      nav { width: 75%;}
+      section{ float: left; padding: 0 2%;}
+      section#chat{ margin-bottom: 50px; width: 75%;}
+      section#left{ width: 20%;}
+      section#left h2 { font-size: 1em;}
       form { background: #000; padding: 3px; position: fixed; bottom: 0; width: 100%; }
       form input { border: 0; padding: 10px; width: 90%; margin-right: .5%; }
       form button { width: 9%; background: rgb(130, 224, 255); border: none; padding: 10px; }
@@ -14,16 +20,17 @@
     </style>
   </head>
   <body>
-    Connecté en tant que <i><%= pseudo %></i> - <a href="/" id="logout">Logout</a> - utilisateurs connectés :
-    <ul id="users"></ul>
+    <nav>Connecté en tant que <i><%= pseudo %></i> - <a href="/" id="logout">Logout</a></nav>
 
-    <ul id="messages"></ul>
+    <section id="chat">
+      <ul id="messages"></ul>
+      <ul id="info"></ul>
+    </section>
 
-      
-    <ul id="info">
-      
-    </ul>
-
+    <section id="left">
+      <h2>utilisateurs connectés</h2>
+      <ul id="users"></ul>
+    </section>
 
     <form action="">
       <input type="search" id="m" autocomplete="off" required /><button>Send</button>
@@ -85,6 +92,12 @@
         var youtubeId = url.match(youtubeRegex);
         if (!!youtubeId) {
           data.message = '<iframe width="420" height="315" src="https://www.youtube.com/embed/' + youtubeId[1] + '" frameborder="0" allowfullscreen></iframe>';
+        }
+
+        var vimeoRegex = /(?:vimeo\.com\/(\d+))/i;
+        var vimeoId = url.match(vimeoRegex);
+        if (!!vimeoId) {
+          data.message = '<iframe src="https://player.vimeo.com/video/' + vimeoId[1] + '" width="500" height="281" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>';
         }
 
         var imageRegex = /\.(gif|jpg|jpeg|tiff|png)$/i;
