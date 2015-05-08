@@ -1,0 +1,160 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Socket.IO chat</title>
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      body { font: 13px Helvetica, Arial; }
+      form { background: #000; padding: 3px; position: fixed; bottom: 0; width: 100%; }
+      form input { border: 0; padding: 10px; width: 90%; margin-right: .5%; }
+      form button { width: 9%; background: rgb(130, 224, 255); border: none; padding: 10px; }
+      #messages { list-style-type: none; margin: 0; padding: 0; }
+      #messages li { padding: 5px 10px; }
+      #messages li:nth-child(odd) { background: #eee; }
+    </style>
+  </head>
+  <body>
+    Connecté en tant que <i><%= pseudo %></i> - <a href="/" id="logout">Logout</a> - utilisateurs connectés :
+    <ul id="users"></ul>
+
+    <ul id="messages"></ul>
+
+      
+    <ul id="info">
+      
+    </ul>
+
+
+    <form action="">
+      <input type="search" id="m" autocomplete="off" required /><button>Send</button>
+    </form>
+
+
+    <script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
+    <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
+    <script>
+      var socket        = io();
+      var pseudo        = "<%= pseudo %>";
+      var currentPseudo = pseudo;
+
+      // On informe que le serveur que l'on vient de se connecter
+      socket.emit('login', pseudo);
+
+      var typingTimer;  
+      var isTyping = false;
+
+      // En cours de rédaction
+      $( "#m" ).keypress(function() {
+        clearTimeout(typingTimer);
+        if (!isTyping) {
+        socket.emit('startTyping', pseudo);
+          isTyping = true;
+        }
+      });
+     
+      // Arrete d'écrire
+      $( "#m" ).keyup(function() {
+        clearTimeout(typingTimer);
+        typingTimer = setTimeout(function () {
+          if (isTyping) {
+            socket.emit('stopTyping', pseudo);
+            isTyping = false;
+          }
+        }, 500)
+      });
+
+      // Déconnexion
+      $('a#logout').click(function() {
+        // On informe le serveur que l'on se déconnecte
+        socket.emit('logout', pseudo);
+      });
+
+      // Envoi d'un message
+      $('form').submit(function() {
+        message = $('#m').val();
+        socket.emit('newMessage', message, pseudo);
+        $('#m').val('');
+        return false;
+      });
+
+      // Lecture du message
+      socket.on('newMessage', function(data) {
+        var url = data.message;
+
+        var youtubeRegex = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/ ]{11})/i;
+        var youtubeId = url.match(youtubeRegex);
+        if (!!youtubeId) {
+          data.message = '<iframe width="420" height="315" src="https://www.youtube.com/embed/' + youtubeId[1] + '" frameborder="0" allowfullscreen></iframe>';
+        }
+
+        var imageRegex = /\.(gif|jpg|jpeg|tiff|png)$/i;
+        var image = url.match(imageRegex);
+        if (!!image) {
+          data.message = '<a href="' + image["input"] + '" target="_blank"><img src="' + image["input"] + '" alt="" width="120px" /></a>';
+        }
+
+        insereMessage(data.pseudo, data.message, data.date);
+      });
+
+
+      socket.on('login', function(pseudo, users) {
+        if (currentPseudo != pseudo) {
+          $('#messages').append('<li>--> <em>' + pseudo + ' a rejoint le Chat !</em></li>');
+        }
+
+        $('ul#users li').hide();
+
+        for (i = 0; i < users.length; i++) {
+          $('#users').prepend('<li>' + users[i] + '</li>');
+        }
+
+      });
+      
+      socket.on('logout', function(pseudo, users) {
+        if (currentPseudo != pseudo) {
+          $('#messages').append('<li><-- <em>*' + pseudo + ' a quitté le Chat :(</em></li>');
+        }
+
+        $('ul#users li').hide();
+        console.log(users);
+        for (i = 0; i < users.length; i++) {
+          $('#users').prepend('<li>' + users[i] + '</li>');
+        }
+
+      });
+
+
+      socket.on('updateTyping', function (typingUsers) {  
+        $('ul#info li').hide();
+        for (i = 0; i < typingUsers.length; i++) {
+          console.log(typingUsers);
+          $('#info').append('<li>' + typingUsers + ' is typing...</li>');
+        }
+      });
+
+      function insereMessage(pseudo, message) {
+        if (currentPseudo == pseudo) {
+          $('#messages').append('<li>['+ date() +'] <strong style="color: red">' + pseudo + '</strong> - ' + message + '</li>');
+        } else {
+         $('#messages').append('<li>['+ date() +'] <strong style="color: blue">' + pseudo + '</strong> - ' + message + '</li>');
+        }
+      }
+
+      function date() {
+        var date = new Date();
+        var h = date.getHours();
+        var m = date.getMinutes();
+        if (m < 10) {m = "0" + m}
+        var s = date.getSeconds();
+        if (s < 10) {s = "0" + s}
+
+        time = h + ':'+ m + ':' + s;
+
+        return time;
+      }
+
+
+    </script>
+
+  </body>
+</html>
