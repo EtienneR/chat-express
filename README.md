@@ -1,4 +1,4 @@
-# Chat sur NodeJS avec des websocket (béta)
+# Chat sur NodeJS avec des websocket (alpha)
 
 ## Installation
 
@@ -14,3 +14,15 @@ Lancer le serveur :
 * ExpressJS
 * SocketIO
 * jQuery (à remplacer par Angular...)
+
+
+## Fonctionnalités avancées
+
+* Détection si le message envoyé contient uniquement :
+** une image (balise <code><img></code>)
+** une vidéo Youtube (balise <code><iframe></code> après récupération de l'id de la vidéo)
+
+
+## A corriger
+
+* Injection de code Javascript...
