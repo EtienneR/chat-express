@@ -39,6 +39,7 @@
 
     <script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
     <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
+    <script src="https://platform.vine.co/static/scripts/embed.js"></script>
     <script>
       var socket        = io();
       var pseudo        = "<%= pseudo %>";
@@ -115,6 +116,15 @@
           data.message = '<iframe frameborder="0" width="480" height="270" src="//www.dailymotion.com/embed/video/' + dailymotionIdMini[1] + '" allowfullscreen></iframe>';
         }
 
+        // VINE
+        var vineRegex = /(?:vine\.co\/v\/([^_]+)[^#]*)/i;
+        var vineId = url.match(vineRegex);
+        if (!!vineId) {
+          console.log(vineId[1]);
+          data.message = '<iframe src="https://vine.co/v/' + vineId[1] + '/embed/postcard" width="300" height="300" frameborder="0"></iframe>';
+        }
+
+        // IMAGES
         var imageRegex = /\.(gif|jpg|jpeg|tiff|png)$/i;
         var image = url.match(imageRegex);
         if (!!image) {
