@@ -1,4 +1,4 @@
-# Chat sur NodeJS avec des websocket (alpha)
+# Chat sur NodeJS avec des Websocket (alpha)
 
 ## Installation
 
@@ -18,9 +18,13 @@ Lancer le serveur :
 
 ## Fonctionnalités avancées
 
-* Détection si le message envoyé contient uniquement :
-** une image (balise <code><img></code>)
-** une vidéo Youtube (balise <code><iframe></code> après récupération de l'id de la vidéo)
+- Affiche les utilisateurs connectés
+
+- Affiche si un utilisateur est en train de rédiger un message
+
+- Détection si le message envoyé contient uniquement :
+* une image (balise <code><img></code>)
+* une vidéo Youtube (balise <code><iframe></code> après récupération de l'id de la vidéo)
 
 
 ## A corriger
