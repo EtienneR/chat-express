@@ -5,37 +5,55 @@
     <style>
       * { margin: 0; padding: 0; box-sizing: border-box; }
       ul li { list-style-type: none;}
-      body { font: 13px Helvetica, Arial; }
-      nav { width: 75%;}
-      section{ float: left; padding: 0 2%;}
-      section#chat{ margin-bottom: 50px; width: 75%;}
-      section#left{ width: 20%;}
+      body { font: 13px Helvetica, Arial; margin: 0 5%; width: 90%}
+      nav { width: 75%; margin: 10px 0;}
+      section{ float: left;}
+      section#chat{ margin-bottom: 50px; width: 85%;}
+      section#chat h2{
+        background: none repeat scroll 0 0 #5fb471;
+        color: #fff;
+        font-weight: bold;
+        margin-bottom: 5px;
+        padding: 20px 0;
+        text-align: center;
+      }
+      section#left{ width: 10%; position: fixed; right: 5%;}
       section#left h2 { font-size: 1em;}
-      form { background: #000; padding: 3px; position: fixed; bottom: 0; width: 100%; }
-      form input { border: 0; padding: 10px; width: 90%; margin-right: .5%; }
-      form button { width: 9%; background: rgb(130, 224, 255); border: none; padding: 10px; }
+      form { padding: 3px; position: fixed; bottom: 0; width: 90%; }
+      form input { border: 0; padding: 10px; width: 85%; margin-right: .5%; border: 1px solid #000; }
+      form button { 
+        width: 10%;
+        background: none repeat scroll 0 0 #6294c2;
+        border-radius: 2px;
+        border: none;
+        color: #fff;
+        font-weight: bold;
+        float: right;
+        padding: 10px 15px;}
+      form button:hover{
+        cursor: pointer;
+      }
       #messages { list-style-type: none; margin: 0; padding: 0; }
-      #messages li { padding: 5px 10px; }
+      #messages li { padding: 10px; }
       #messages li:nth-child(odd) { background: #eee; }
     </style>
   </head>
   <body>
-    <nav>Connecté en tant que <i><%= pseudo %></i> - <a href="/" id="logout">Logout</a></nav>
+    <nav>Connecté en tant que <i><b><%= pseudo %></b></i> - <a href="/" id="logout">Logout</a></nav>
 
     <section id="chat">
+      <h2>Messages</h2>
       <ul id="messages"></ul>
-      <ul id="info"></ul>
     </section>
 
     <section id="left">
-      <h2>utilisateurs connectés</h2>
       <ul id="users"></ul>
     </section>
 
     <form action="">
-      <input type="search" id="m" autocomplete="off" required /><button>Send</button>
+      <ul id="info"></ul>
+      <input type="search" id="m" autocomplete="off" placeholder="Entrez votre message" required /><button>Send</button>
     </form>
-
 
     <script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
     <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
@@ -44,12 +62,11 @@
       var socket        = io();
       var pseudo        = "<%= pseudo %>";
       var currentPseudo = pseudo;
+      var typingTimer;  
+      var isTyping      = false;
 
       // On informe que le serveur que l'on vient de se connecter
       socket.emit('login', pseudo);
-
-      var typingTimer;  
-      var isTyping = false;
 
       // En cours de rédaction
       $( "#m" ).keypress(function() {
@@ -59,7 +76,8 @@
           isTyping = true;
         }
       });
-     
+
+
       // Arrete d'écrire
       $( "#m" ).keyup(function() {
         clearTimeout(typingTimer);
@@ -71,11 +89,13 @@
         }, 500)
       });
 
+
       // Déconnexion
       $('a#logout').click(function() {
         // On informe le serveur que l'on se déconnecte
-        socket.emit('logout', pseudo);
+        socket.emit('disconnect');
       });
+
 
       // Envoi d'un message
       $('form').submit(function() {
@@ -85,9 +105,29 @@
         return false;
       });
 
+
       // Lecture du message
       socket.on('newMessage', function(data) {
         var url = data.message;
+
+        function modifierMessage(txt)
+        {
+
+          txt = txt.replace(new RegExp(":\\)", "gi"), '<img src="https://az545221.vo.msecnd.net/skype-faq-media/faq_content/skype/screenshots/fa12330/emoticons/smile_20.png" alt=":)" />');
+          txt = txt.replace(new RegExp(":=\\)", "gi"), '<img src="https://az545221.vo.msecnd.net/skype-faq-media/faq_content/skype/screenshots/fa12330/emoticons/smile_20.png" alt=":=)" />');
+          txt = txt.replace(new RegExp(":-\\)", "gi"), '<img src="https://az545221.vo.msecnd.net/skype-faq-media/faq_content/skype/screenshots/fa12330/emoticons/smile_20.png" alt=":-)" />');
+
+          txt = txt.replace(new RegExp(":\\(", "gi"), '<img src="https://az545221.vo.msecnd.net/skype-faq-media/faq_content/skype/screenshots/fa12330/emoticons/sadsmile_20.png" alt=":(" />');
+          txt = txt.replace(new RegExp(":=\\(", "gi"), '<img src="https://az545221.vo.msecnd.net/skype-faq-media/faq_content/skype/screenshots/fa12330/emoticons/sadsmile_20.png" alt=":=(" />');
+          txt = txt.replace(new RegExp(":-\\(", "gi"), '<img src="https://az545221.vo.msecnd.net/skype-faq-media/faq_content/skype/screenshots/fa12330/emoticons/sadsmile_20.png" alt=":-(" />');
+
+          txt = txt.replace(new RegExp("/^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/", "gi"), 'link');
+
+          return txt;
+        }
+
+        console.log(modifierMessage(url));
+        data.message = modifierMessage(url);
 
         // YOUTUBE //
         var youtubeRegex = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/ ]{11})/i;
@@ -120,7 +160,6 @@
         var vineRegex = /(?:vine\.co\/v\/([^_]+)[^#]*)/i;
         var vineId = url.match(vineRegex);
         if (!!vineId) {
-          console.log(vineId[1]);
           data.message = '<iframe src="https://vine.co/v/' + vineId[1] + '/embed/postcard" width="300" height="300" frameborder="0"></iframe>';
         }
 
@@ -130,6 +169,14 @@
         if (!!image) {
           data.message = '<a href="' + image["input"] + '" target="_blank"><img src="' + image["input"] + '" alt="" width="120px" /></a>';
         }
+        //https://az545221.vo.msecnd.net/skype-faq-media/faq_content/skype/screenshots/fa12330/emoticons/smile_20.png
+
+        // LINK
+/*        var linkRegex = /^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/;
+        var link = url.match(linkRegex);
+        if (!!link) {
+          data.message = '<a href="' + link[0] + '" target="_blank">' + link[0] + '</a>';
+        }*/
 
         insereMessage(data.pseudo, data.message, data.date);
       });
@@ -137,24 +184,38 @@
 
       socket.on('login', function(pseudo, users) {
         if (currentPseudo != pseudo) {
-          $('#messages').append('<li>--> <em>' + pseudo + ' a rejoint le Chat !</em></li>');
+          $('#messages').append('<li>['+ date() +'] --> <em>' + pseudo + ' a rejoint le Chat !</em></li>');
         }
 
         $('ul#users li').hide();
+
+        $('#left h2').hide();
+        if (users.length == 1) {
+          $('#left').prepend('<h2>' +  users.length + ' utilisateur connecté</h2>');
+        } else {
+          $('#left').prepend('<h2>' +  users.length + ' utilisateurs connectés</h2>');
+        }
 
         for (i = 0; i < users.length; i++) {
           $('#users').prepend('<li>' + users[i] + '</li>');
         }
 
       });
-      
+
+
       socket.on('logout', function(pseudo, users) {
         if (currentPseudo != pseudo) {
-          $('#messages').append('<li><-- <em>*' + pseudo + ' a quitté le Chat :(</em></li>');
+          $('#messages').append('<li>['+ date() +'] <-- <em>*' + pseudo + ' a quitté le Chat :(</em></li>');
+        }
+
+        $('#left h2').hide();
+        if (users.length == 1) {
+          $('#left').prepend('<h2>' +  users.length + ' utilisateur connecté</h2>');
+        } else {
+          $('#left').prepend('<h2>' +  users.length + ' utilisateurs connectés</h2>');
         }
 
         $('ul#users li').hide();
-        console.log(users);
         for (i = 0; i < users.length; i++) {
           $('#users').prepend('<li>' + users[i] + '</li>');
         }
@@ -162,25 +223,29 @@
       });
 
 
-      socket.on('updateTyping', function (typingUsers) {  
-        $('ul#info li').hide();
-        for (i = 0; i < typingUsers.length; i++) {
-          console.log(typingUsers);
-          $('#info').append('<li>' + typingUsers + ' is typing...</li>');
+      socket.on('updateTyping', function (typingUsers, pseudo) {
+        if (currentPseudo != pseudo) {
+          $('ul#info li').hide();
+          for (i = 0; i < typingUsers.length; i++) {
+            $('#info').append('<li>' + typingUsers + ' is typing...</li>');
+          }
         }
       });
+
 
       function insereMessage(pseudo, message) {
         if (currentPseudo == pseudo) {
           $('#messages').append('<li>['+ date() +'] <strong style="color: red">' + pseudo + '</strong> - ' + message + '</li>');
         } else {
-         $('#messages').append('<li>['+ date() +'] <strong style="color: blue">' + pseudo + '</strong> - ' + message + '</li>');
+          $('#messages').append('<li>['+ date() +'] <strong style="color: blue">' + pseudo + '</strong> - ' + message + '</li>');
         }
       }
+
 
       function date() {
         var date = new Date();
         var h = date.getHours();
+        if (h < 10) {h = "0" + h}
         var m = date.getMinutes();
         if (m < 10) {m = "0" + m}
         var s = date.getSeconds();
