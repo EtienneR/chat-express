@@ -24,28 +24,19 @@ app.post('/chat', function(req, res) {
     });
 });
 
-// Utilisateurs connectés
-var users = [];
+
+var users       = [];
+var typingUsers = [];
 
 
 // Webscokets
 io.on('connection', function(socket) {
-    var typingUsers = [];
 
-
-/*  for (i = 0; i < users.length; i++) {
-    socket.emit('login', users[i]);
-  }*/
-    //var users = [ { id: 1, name: 'titi' }, { id: 2, name: 'Hodor' } ];
-    
-/*    Et non : 
-    [ { id: 1, name: 'titi' } ]
-    [ { id: 1, name: 'Hodor' } ]*/
+    var loggedUser;
 
 
     // Utilisateur connecté
     socket.on('login', function(pseudo) {
-        //users.push({id: users.length+1,name: pseudo});
         var userIndex = -1;
 
         for (i = 0; i < users.length; i++) {
@@ -58,46 +49,55 @@ io.on('connection', function(socket) {
             users.push(pseudo);
         }
 
-        console.log('--> Connexion de '+ pseudo);
+        loggedUser = pseudo;
+
+        console.log('--> Connexion de ' + pseudo);
         console.log(users);
         io.emit('login', pseudo, users);
     });
 
-    // Ne pas utiliser "disconnected /!\"
-    socket.on('logout', function(pseudo) {
-        console.log('<-- Déconnexion de '+ pseudo);
-        var userIndex = users.indexOf(pseudo);
-        console.log('Index '+userIndex);
-        if (userIndex !== -1) {
-            users.splice(userIndex, 1);
-        }
 
-        console.log(users);
-        io.emit('logout', pseudo, users);
-    });
+    socket.on('disconnect', function() {
+        if (loggedUser !== undefined) {
+            pseudo = loggedUser;
+            console.log('<-- Déconnexion de ' + pseudo);
+            var userIndex = users.indexOf(pseudo);
+
+            if (userIndex !== -1) {
+                users.splice(userIndex, 1);
+            }
+
+            io.emit('logout', pseudo, users);
+        }
+    }); 
+
 
     // Message envoyé
     socket.on('newMessage', function(message, pseudo) {
         io.emit('newMessage', {pseudo: pseudo, message: message});
     });
 
+
     // En cours de rédaction d'un message
     socket.on('startTyping', function(pseudo) {
         if (typingUsers.indexOf(pseudo) === -1) {
           typingUsers.push(pseudo);
         }
-        console.log('~~ '+ pseudo + ' is typing');
-        io.emit('updateTyping', typingUsers);
+
+        console.log('~~ ' + pseudo + ' is typing');
+        io.emit('updateTyping', typingUsers, pseudo);
     });
 
+
+    // Arrêtre de rédiger un message
     socket.on('stopTyping', function(pseudo) {
         var typingUserIndex = typingUsers.indexOf(pseudo);
         if (typingUserIndex !== -1) {
           typingUsers.splice(typingUserIndex, 1);
         }
 
-        console.log('// '+ pseudo + ' stop typing');
-        io.emit('updateTyping', typingUsers);
+        console.log('// ' + pseudo + ' stop typing');
+        io.emit('updateTyping', typingUsers, pseudo);
     });
 
 });
