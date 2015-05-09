@@ -13,6 +13,7 @@ Lancer le serveur :
 
 * ExpressJS
 * SocketIO
+* Ent (Encode and decode HTML entities)
 * jQuery (à remplacer par Angular...)
 
 
@@ -26,10 +27,11 @@ Lancer le serveur :
 * une vidéo Vimeo
 * une vidéo Dailymotion
 * une vidéo Vine
+* quelques smileys
 
 
 ## A corriger
 
-* Injection de code Javascript dans le message...
-* Déconnexion "sauvage" d'un utilisateur (tableau non mis à jour dans la liste des utilisateurs côté serveur)
+* ~~Injection de code Javascript dans le message...~~
+* ~~Déconnexion "sauvage" d'un utilisateur (tableau non mis à jour dans la liste des utilisateurs côté serveur)~~
 * Plein d'autres choses
