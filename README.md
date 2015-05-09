@@ -16,17 +16,20 @@ Lancer le serveur :
 * jQuery (à remplacer par Angular...)
 
 
-## Fonctionnalités avancées
+## Fonctionnalités / recettage
 
 - Affiche les utilisateurs connectés
-
 - Affiche si un utilisateur est en train de rédiger un message
-
 - Détection si le message envoyé contient uniquement :
-* une image (balise <code><img></code>)
-* une vidéo Youtube (balise <code><iframe></code> après récupération de l'id de la vidéo)
+* une image 
+* une vidéo Youtube
+* une vidéo Vimeo
+* une vidéo Dailymotion
+* une vidéo Vine
 
 
 ## A corriger
 
-* Injection de code Javascript...
+* Injection de code Javascript dans le message...
+* Déconnexion "sauvage" d'un utilisateur (tableau non mis à jour dans la liste des utilisateurs côté serveur)
+* Plein d'autres choses
