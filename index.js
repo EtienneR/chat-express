@@ -2,6 +2,7 @@ var app        = require('express')();
 var http       = require('http').Server(app);
 var io         = require('socket.io')(http);
 var bodyParser = require('body-parser');
+var ent        = require('ent');
 
 
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -74,6 +75,7 @@ io.on('connection', function(socket) {
 
     // Message envoyé
     socket.on('newMessage', function(message, pseudo) {
+        message = ent.encode(message);
         io.emit('newMessage', {pseudo: pseudo, message: message});
     });
 
