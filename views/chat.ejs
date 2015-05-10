@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="css/style.css">
   </head>
   <body>
-    <nav>Connecté en tant que <i><b><%= pseudo %></b></i> - <a href="/" id="logout">Logout</a></nav>
+    <nav>Connecté en tant que <img src="http://api.adorable.io/avatar/32/<%= pseudo %>" alt="" /> <i><b><%= pseudo %></b></i> - <a href="/" id="logout">Logout</a></nav>
 
     <section id="left">
       <ul id="users"></ul>
@@ -91,8 +91,6 @@
           txt = txt.replace(new RegExp(":=\\(", "gi"), '<img src="https://az545221.vo.msecnd.net/skype-faq-media/faq_content/skype/screenshots/fa12330/emoticons/sadsmile_20.png" alt=":=(" />');
           txt = txt.replace(new RegExp(":-\\(", "gi"), '<img src="https://az545221.vo.msecnd.net/skype-faq-media/faq_content/skype/screenshots/fa12330/emoticons/sadsmile_20.png" alt=":-(" />');
 
-          txt = txt.replace(new RegExp("/^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/", "gi"), 'link');
-
           return txt;
         }
 
@@ -167,7 +165,7 @@
         }
 
         for (i = 0; i < users.length; i++) {
-          $('#users').prepend('<li>' + users[i] + '</li>');
+          $('#users').prepend('<li><img src="http://api.adorable.io/avatar/32/' + users[i] + '" alt="" /> ' + users[i] + '</li>');
         }
 
       });
@@ -205,9 +203,9 @@
 
       function insereMessage(pseudo, message) {
         if (currentPseudo == pseudo) {
-          $('#messages').append('<li>['+ date() +'] <strong style="color: red">' + pseudo + '</strong> - ' + message + '</li>');
+          $('#messages').append('<li>['+ date() +'] <img src="http://api.adorable.io/avatar/32/' + pseudo + '" alt="" /> <strong style="color: red">' + pseudo + '</strong> - ' + message + '</li>');
         } else {
-          $('#messages').append('<li>['+ date() +'] <strong style="color: blue">' + pseudo + '</strong> - ' + message + '</li>');
+          $('#messages').append('<li>['+ date() +'] <img src="http://api.adorable.io/avatar/32/' + pseudo + '" alt="" /> <strong style="color: blue">' + pseudo + '</strong> - ' + message + '</li>');
         }
       }
 
