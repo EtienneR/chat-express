@@ -1,11 +1,26 @@
-var app        = require('express')();
+var express    = require('express');
+var app        = express();
 var http       = require('http').Server(app);
 var io         = require('socket.io')(http);
 var bodyParser = require('body-parser');
 var ent        = require('ent');
+var path       = require('path');
+var md5        = require('MD5');
 
+
+var mongoose = require('mongoose');
+mongoose.connect('mongodb://127.0.0.1:27017/chat-express');
+
+var userSchema = new mongoose.Schema({ 
+    login: String,
+    password: String
+});
+var Users = mongoose.model('Users', userSchema, 'Users');
 
 app.use(bodyParser.urlencoded({ extended: false }));
+
+
+app.use(express.static(path.join(__dirname, 'public')));
 
 
 app.set('view engine', 'html');
@@ -13,18 +28,30 @@ app.engine('html', require('ejs').renderFile);
 
 
 app.get('/', function(req, res) {
-    res.render(__dirname + '/views/index.ejs', function(err, html) {
+    res.render(__dirname + '/views/index.ejs', { error: "", login: "" }, function(err, html) {
         res.send(html);
     });
 });
 
-app.post('/chat', function(req, res) {
-    var pseudo = req.body.pseudo;
-    res.render(__dirname + '/views/chat.ejs', { pseudo: pseudo }, function(err, html) {
-        res.send(html);
-    });
-});
 
+app.post('/', function(req, res) {
+    var login    = req.body.login;
+    var password = req.body.password;
+
+    // Vérification login + password
+    Users.findOne({login: login, password: md5(password) }, function(err, Users) {
+        if (Users == null) {
+            res.render(__dirname + '/views/index.ejs', { error: 'mauvais identifiant', login: login }, function(err, html) {
+                res.send(html);
+            });
+        } else {
+            res.render(__dirname + '/views/chat.ejs', { pseudo: login }, function(err, html) {
+                res.send(html);
+            });
+        }
+    });
+
+});
 
 var users       = [];
 var typingUsers = [];
@@ -34,7 +61,6 @@ var typingUsers = [];
 io.on('connection', function(socket) {
 
     var loggedUser;
-
 
     // Utilisateur connecté
     socket.on('login', function(pseudo) {
