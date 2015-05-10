@@ -102,6 +102,8 @@ app.post('/signup', function(req, res) {
                             console.log('Utilisateur ' + login + ' ajouté');
                         }
                     });
+
+                    res.redirect('/');
                 }
 
             });
