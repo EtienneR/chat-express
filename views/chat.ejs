@@ -1,58 +1,28 @@
 <!doctype html>
 <html>
   <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, maximum-scale=1" />
     <title>Socket.IO chat</title>
-    <style>
-      * { margin: 0; padding: 0; box-sizing: border-box; }
-      ul li { list-style-type: none;}
-      body { font: 13px Helvetica, Arial; margin: 0 5%; width: 90%}
-      nav { width: 75%; margin: 10px 0;}
-      section{ float: left;}
-      section#chat{ margin-bottom: 50px; width: 85%;}
-      section#chat h2{
-        background: none repeat scroll 0 0 #5fb471;
-        color: #fff;
-        font-weight: bold;
-        margin-bottom: 5px;
-        padding: 20px 0;
-        text-align: center;
-      }
-      section#left{ width: 10%; position: fixed; right: 5%;}
-      section#left h2 { font-size: 1em;}
-      form { padding: 3px; position: fixed; bottom: 0; width: 90%; }
-      form input { border: 0; padding: 10px; width: 85%; margin-right: .5%; border: 1px solid #000; }
-      form button { 
-        width: 10%;
-        background: none repeat scroll 0 0 #6294c2;
-        border-radius: 2px;
-        border: none;
-        color: #fff;
-        font-weight: bold;
-        float: right;
-        padding: 10px 15px;}
-      form button:hover{
-        cursor: pointer;
-      }
-      #messages { list-style-type: none; margin: 0; padding: 0; }
-      #messages li { padding: 10px; }
-      #messages li:nth-child(odd) { background: #eee; }
-    </style>
+    <link rel="stylesheet" href="css/style.css">
   </head>
   <body>
     <nav>Connecté en tant que <i><b><%= pseudo %></b></i> - <a href="/" id="logout">Logout</a></nav>
+
+    <section id="left">
+      <ul id="users"></ul>
+    </section>
+
 
     <section id="chat">
       <h2>Messages</h2>
       <ul id="messages"></ul>
     </section>
 
-    <section id="left">
-      <ul id="users"></ul>
-    </section>
-
     <form action="">
       <ul id="info"></ul>
-      <input type="search" id="m" autocomplete="off" placeholder="Entrez votre message" required /><button>Send</button>
+      <input type="search" id="m" autocomplete="off" placeholder="Entrez votre message" required />
+      <button>Send</button>
     </form>
 
     <script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
@@ -69,7 +39,7 @@
       socket.emit('login', pseudo);
 
       // En cours de rédaction
-      $( "#m" ).keypress(function() {
+      $('#m').keypress(function() {
         clearTimeout(typingTimer);
         if (!isTyping) {
         socket.emit('startTyping', pseudo);
@@ -79,7 +49,7 @@
 
 
       // Arrete d'écrire
-      $( "#m" ).keyup(function() {
+      $('#m').keyup(function() {
         clearTimeout(typingTimer);
         typingTimer = setTimeout(function () {
           if (isTyping) {
