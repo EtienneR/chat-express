@@ -55,7 +55,9 @@ Lancer le serveur :
 use chat-express
 ```
 
-### Insertion des utilisateurs
+### Users
+
+#### Insertion des utilisateurs
 
 ```javascript
 db.Users.insert(
@@ -77,20 +79,19 @@ db.Users.insert(
 })
 ```
 
-### Vérification
+#### Vérification
 
 ```javascript
 db.Users.findOne({$and: [ {login: 'toto'}, {password: 'f71dbe52628a3f83a77ab494817525c6'} ]})
 ```
 
-### Afficher tous les utilisateurs
+#### Afficher tous les utilisateurs
 
 ```javascript
 db.Users.find()
 ```
 
-
-### Suppression de la collection "Users"
+#### Suppression de la collection "Users"
 
 ```javascript
 db.Users.drop()
@@ -99,6 +100,6 @@ db.Users.drop()
 ### Suppression de la base "chat-express"
 
 ```javascript
-user chat-express
+use chat-express
 db.dropDatabase();
 ```
