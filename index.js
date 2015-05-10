@@ -38,18 +38,27 @@ app.post('/', function(req, res) {
     var login    = req.body.login;
     var password = req.body.password;
 
-    // Vérification login + password
-    Users.findOne({login: login, password: md5(password) }, function(err, Users) {
-        if (Users == null) {
-            res.render(__dirname + '/views/index.ejs', { error: 'mauvais identifiant', login: login }, function(err, html) {
-                res.send(html);
-            });
-        } else {
-            res.render(__dirname + '/views/chat.ejs', { pseudo: login }, function(err, html) {
-                res.send(html);
-            });
-        }
-    });
+    if (login && password) {
+
+        // Vérification login + password
+        Users.findOne({login: login, password: md5(password) }, function(err, Users) {
+            if (Users == null) {
+                res.render(__dirname + '/views/index.ejs', { error: 'mauvais identifiant', login: login }, function(err, html) {
+                    res.send(html);
+                });
+            } else {
+                res.render(__dirname + '/views/chat.ejs', { pseudo: login }, function(err, html) {
+                    res.send(html);
+                });
+            }
+        });
+
+    } else {
+        res.render(__dirname + '/views/index.ejs', { error: 'Merci de remplir tous les champs', login: login }, function(err, html) {
+            res.send(html);
+        });
+    }
+
 
 });
 
