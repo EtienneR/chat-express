@@ -7,6 +7,8 @@
     "socket.io": "^1.3.5",
     "ejs": "~2.3.1",
     "ent": "*",
-    "body-parser": "*"
+    "body-parser": "*",
+    "mongoose": "*",
+    "MD5": "*"
   }
 }
