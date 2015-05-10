@@ -15,10 +15,11 @@ var userSchema = new mongoose.Schema({
     login: String,
     password: String
 });
+
 var Users = mongoose.model('Users', userSchema, 'Users');
 
-app.use(bodyParser.urlencoded({ extended: false }));
 
+app.use(bodyParser.urlencoded({ extended: false }));
 
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -28,7 +29,7 @@ app.engine('html', require('ejs').renderFile);
 
 
 app.get('/', function(req, res) {
-    res.render(__dirname + '/views/index.ejs', { error: "", login: "" }, function(err, html) {
+    res.render(__dirname + '/views/index.ejs', { error: '', login: '' }, function(err, html) {
         res.send(html);
     });
 });
@@ -59,14 +60,72 @@ app.post('/', function(req, res) {
         });
     }
 
-
 });
+
+// FORMULAIRE D'INSCRIPTION
+app.get('/signup', function(req, res) {
+    res.render(__dirname + '/views/signup.ejs', { error: '', login: '' }, function(err, html) {
+        res.send(html);
+    });
+});
+
+
+// FORMULAIRE D'INSCRIPTION POST
+app.post('/signup', function(req, res) {
+    var login     = req.body.login;
+    var password  = req.body.password;
+    var password2 = req.body.password2;
+
+    if (login && password && password2) {
+
+        if (password == password2) {
+
+            // Vérification si login unique
+            Users.findOne({login: login}, function(err, user) {
+
+                if (user) {
+                    res.render(__dirname + '/views/signup.ejs', { error: 'Utilisateur ' + login + ' existant, merci de choisir un autre nom', login: '' }, function(err, html) {
+                        res.send(html);
+                    });
+
+                } else {
+                    // Encapsulation des données
+                    user = new Users({
+                        'login': login,
+                        'password': md5(password)
+                    });
+
+                    // Insertion des données
+                    user.save(function(err) {
+                        console.log(err);
+                        if (err == null) {
+                            console.log('Utilisateur ' + login + ' ajouté');
+                        }
+                    });
+                }
+
+            });
+
+
+        } else {
+            res.render(__dirname + '/views/signup.ejs', { error: 'Erreur dans le mdp', login: login }, function(err, html) {
+                res.send(html);
+            });
+        }
+
+    } else {
+        res.render(__dirname + '/views/signup.ejs', { error: 'Merci de renseigner tous les champs', login: '' }, function(err, html) {
+            res.send(html);
+        });
+    }
+});
+
 
 var users       = [];
 var typingUsers = [];
 
 
-// Webscokets
+// WEBSOCKETS
 io.on('connection', function(socket) {
 
     var loggedUser;
