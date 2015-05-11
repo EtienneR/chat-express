@@ -7,22 +7,27 @@
     <link rel="stylesheet" href="css/style.css">
   </head>
   <body>
-    <nav>Connecté en tant que <img src="http://api.adorable.io/avatar/32/<%= pseudo %>" alt="" /> <i><b><%= pseudo %></b></i> - <a href="/" id="logout">Logout</a></nav>
 
     <section id="left">
+
+      <nav>
+        <img src="http://api.adorable.io/avatar/32/<%= pseudo %>" alt="" />
+        <i><b><%= pseudo %></b></i>
+        <br /><a href="/" id="logout">Logout</a>
+      </nav>
+
       <ul id="users"></ul>
     </section>
 
 
     <section id="chat">
-      <h2>Messages</h2>
-      <ul id="messages"></ul>
+      <ul id="messages">
+      </ul>
     </section>
 
     <form action="">
       <ul id="info"></ul>
       <input type="search" id="m" autocomplete="off" placeholder="Entrez votre message" required />
-      <button>Send</button>
     </form>
 
     <script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
@@ -32,7 +37,7 @@
       var socket        = io();
       var pseudo        = "<%= pseudo %>";
       var currentPseudo = pseudo;
-      var typingTimer;  
+      var typingTimer;
       var isTyping      = false;
 
       // On informe que le serveur que l'on vient de se connecter
@@ -155,8 +160,6 @@
           $('#messages').append('<li>['+ date() +'] --> <em>' + pseudo + ' a rejoint le Chat !</em></li>');
         }
 
-        $('ul#users li').hide();
-
         $('#left h2').hide();
         if (users.length == 1) {
           $('#left').prepend('<h2>' +  users.length + ' utilisateur connecté</h2>');
@@ -164,8 +167,14 @@
           $('#left').prepend('<h2>' +  users.length + ' utilisateurs connectés</h2>');
         }
 
+        $('ul#users li').hide();
+        console.log('login ' + users[1]);
+        console.log('pseudo ' + currentPseudo);
         for (i = 0; i < users.length; i++) {
-          $('#users').prepend('<li><img src="http://api.adorable.io/avatar/32/' + users[i] + '" alt="" /> ' + users[i] + '</li>');
+   
+            $('#users').prepend('<li class="' + users[i] + '"><img src="http://api.adorable.io/avatar/32/' + users[i] + '" alt="" /> ' + users[i] + '</li>');
+            $('ul#users li.'+currentPseudo).hide();
+      
         }
 
       });
@@ -184,12 +193,13 @@
         }
 
         $('ul#users li').hide();
+        console.log('logout ' + pseudo);
         for (i = 0; i < users.length; i++) {
-          $('#users').prepend('<li>' + users[i] + '</li>');
-        }
+            $('#users').prepend('<li class="' + users[i] + '"><img src="http://api.adorable.io/avatar/32/' + users[i] + '" alt="" /> ' + users[i] + '</li>');
+            $('ul#users li.'+currentPseudo).hide();
+        } 
 
       });
-
 
       socket.on('updateTyping', function (typingUsers, pseudo) {
         if (currentPseudo != pseudo) {
@@ -203,9 +213,10 @@
 
       function insereMessage(pseudo, message) {
         if (currentPseudo == pseudo) {
-          $('#messages').append('<li>['+ date() +'] <img src="http://api.adorable.io/avatar/32/' + pseudo + '" alt="" /> <strong style="color: red">' + pseudo + '</strong> - ' + message + '</li>');
+
+          $('#messages').append('<li class="current"><p>' + message + '</p><div id="message-info"><span>['+ date() +']</span><img src="http://api.adorable.io/avatar/32/' + pseudo + '" alt="" /></div></li>');
         } else {
-          $('#messages').append('<li>['+ date() +'] <img src="http://api.adorable.io/avatar/32/' + pseudo + '" alt="" /> <strong style="color: blue">' + pseudo + '</strong> - ' + message + '</li>');
+          $('#messages').append('<li><p>' + message + '</p><div id="message-info"><span>' + pseudo + ' ['+ date() +']</span><img src="http://api.adorable.io/avatar/32/' + pseudo + '" alt="" /></div></li>');
         }
       }
 
