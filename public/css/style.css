@@ -25,11 +25,18 @@ nav {
 section#left{
 	position: fixed;
 	left: 5%;
+	top: 2%;
 	width: 10%;
 }
 
 section#left h2{
 	font-size: 1em;
+}
+
+ul#users li span{
+	left: 48px;
+	margin-top: 12px;
+	position: absolute;
 }
 
 section#chat{
@@ -66,6 +73,7 @@ section#chat{
 
 #messages li p{
 	background: #7BC4EF;
+	border-radius: 5px;
 	color: #fff;
 	padding: 1.75%;
 	font-size: 1.2em;
@@ -85,7 +93,7 @@ section#chat{
 }
 
 #messages li.current #message-info{
-	left: 10px;
+	left: 0;
 	position: absolute;
 }
 
@@ -101,7 +109,7 @@ section#chat{
 }
 
 form{
-	bottom: 0;
+	bottom: 1px;
 	position: fixed;
 	left: 20%;
 	width: 75%;
