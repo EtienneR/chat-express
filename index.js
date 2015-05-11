@@ -18,11 +18,8 @@ var userSchema = new mongoose.Schema({
 
 var Users = mongoose.model('Users', userSchema, 'Users');
 
-
 app.use(bodyParser.urlencoded({ extended: false }));
-
 app.use(express.static(path.join(__dirname, 'public')));
-
 
 app.set('view engine', 'html');
 app.engine('html', require('ejs').renderFile);
@@ -48,7 +45,7 @@ app.post('/', function(req, res) {
                     res.send(html);
                 });
             } else {
-                res.render(__dirname + '/views/chat.ejs', { pseudo: login }, function(err, html) {
+                res.render(__dirname + '/views/chat.ejs', { login: login }, function(err, html) {
                     res.send(html);
                 });
             }
@@ -133,69 +130,69 @@ io.on('connection', function(socket) {
     var loggedUser;
 
     // Utilisateur connecté
-    socket.on('login', function(pseudo) {
+    socket.on('login', function(login) {
         var userIndex = -1;
 
         for (i = 0; i < users.length; i++) {
-          if (users[i] === pseudo) {
+          if (users[i] === login) {
             userIndex = i;
           }
         }
 
-        if (pseudo !== undefined && userIndex === -1) {
-            users.push(pseudo);
+        if (login !== undefined && userIndex === -1) {
+            users.push(login);
         }
 
-        loggedUser = pseudo;
+        loggedUser = login;
 
-        console.log('--> Connexion de ' + pseudo);
+        console.log('--> Connexion de ' + login);
         console.log(users);
-        io.emit('login', pseudo, users);
+        io.emit('login', login, users);
     });
 
 
     socket.on('disconnect', function() {
         if (loggedUser !== undefined) {
-            pseudo = loggedUser;
-            console.log('<-- Déconnexion de ' + pseudo);
-            var userIndex = users.indexOf(pseudo);
+            login = loggedUser;
+            console.log('<-- Déconnexion de ' + login);
+            var userIndex = users.indexOf(login);
 
             if (userIndex !== -1) {
                 users.splice(userIndex, 1);
             }
 
-            io.emit('logout', pseudo, users);
+            io.emit('logout', login, users);
         }
     }); 
 
 
     // Message envoyé
-    socket.on('newMessage', function(message, pseudo) {
+    socket.on('newMessage', function(message, login) {
         message = ent.encode(message);
-        io.emit('newMessage', {pseudo: pseudo, message: message});
+        io.emit('newMessage', {login: login, message: message});
     });
 
 
     // En cours de rédaction d'un message
-    socket.on('startTyping', function(pseudo) {
-        if (typingUsers.indexOf(pseudo) === -1) {
-          typingUsers.push(pseudo);
+    socket.on('startTyping', function(login) {
+        if (typingUsers.indexOf(login) === -1) {
+          typingUsers.push(login);
         }
 
-        console.log('~~ ' + pseudo + ' is typing');
-        io.emit('updateTyping', typingUsers, pseudo);
+        console.log('~~ ' + login + ' is typing');
+        io.emit('updateTyping', typingUsers, login);
     });
 
 
     // Arrêtre de rédiger un message
-    socket.on('stopTyping', function(pseudo) {
-        var typingUserIndex = typingUsers.indexOf(pseudo);
+    socket.on('stopTyping', function(login) {
+        var typingUserIndex = typingUsers.indexOf(login);
         if (typingUserIndex !== -1) {
           typingUsers.splice(typingUserIndex, 1);
         }
 
-        console.log('// ' + pseudo + ' stop typing');
-        io.emit('updateTyping', typingUsers, pseudo);
+        console.log('// ' + login + ' stop typing');
+        io.emit('updateTyping', typingUsers, login);
     });
 
 });
