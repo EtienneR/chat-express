@@ -10,5 +10,9 @@
     "body-parser": "*",
     "mongoose": "*",
     "MD5": "*"
+  },
+  "devDependencies": {
+    "gulp": "^3.8.11",
+    "gulp-express": "^0.3.5"
   }
 }
