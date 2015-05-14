@@ -6,16 +6,10 @@ gulp.task('server', function () {
   gulp.watch(['index.js'], [server.run]);
 });
 
-gulp.task('watch-html', function () {
+gulp.task('watch-files', function () {
   gulp.watch(['./views/*.ejs'], server.notify);
-});
-
-gulp.task('watch-css', function () {
   gulp.watch(['./public/css/*.css'], server.notify);
-});
-
-gulp.task('watch-js', function () {
   gulp.watch(['./public/js/*.js'], server.notify);
 });
 
-gulp.task('default', ['server', 'watch-html', 'watch-css', 'watch-js']);
+gulp.task('default', ['server', 'watch-files');
