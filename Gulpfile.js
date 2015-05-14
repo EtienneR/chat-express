@@ -3,7 +3,7 @@ var gulp    = require('gulp'),
  
 gulp.task('server', function () {
   server.run(['index.js']);
-  gulp.watch(['index.js'], [server.run]);
+  gulp.watch(['index.js'], server.run);
 });
 
 gulp.task('watch-files', function () {
@@ -12,4 +12,4 @@ gulp.task('watch-files', function () {
   gulp.watch(['./public/js/*.js'], server.notify);
 });
 
-gulp.task('default', ['server', 'watch-files');
+gulp.task('default', ['server', 'watch-files']);
