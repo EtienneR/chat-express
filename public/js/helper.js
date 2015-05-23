@@ -24,6 +24,10 @@ function insereMessage(login, message) {
   }
 }
 
+function scrollAuto() {
+  return $('html, body').animate({scrollTop:$(document).height()}, 'slow');
+}
+
 function date() {
   var date = new Date();
   var h = date.getHours();

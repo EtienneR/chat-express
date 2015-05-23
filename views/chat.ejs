@@ -72,6 +72,7 @@
 
       // Envoi d'un message
       $('form').submit(function() {
+        scrollAuto();
         message = $('#m').val();
         socket.emit('newMessage', message, login);
         $('#m').val('');
@@ -80,6 +81,7 @@
 
       // Lecture du message
       socket.on('newMessage', function(data) {
+        scrollAuto();
         var url = data.message;
 
         data.message = editMessage(url);
