@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, maximum-scale=1" />
     <title>Socket.IO chat</title>
     <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/emojione.min.css" />
   </head>
   <body>
 
@@ -20,7 +21,6 @@
 
     </section>
 
-
     <section id="chat">
       <ul id="messages">
       </ul>
@@ -31,6 +31,7 @@
       <input type="search" id="m" autocomplete="off" placeholder="Entrez votre message" required />
     </form>
 
+    <script src="js/emojione.min.js"></script>
     <script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
     <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
     <script src="https://platform.vine.co/static/scripts/embed.js"></script>
@@ -77,12 +78,11 @@
         return false;
       });
 
-
       // Lecture du message
       socket.on('newMessage', function(data) {
         var url = data.message;
 
-        data.message = modifierMessage(url);
+        data.message = editMessage(url);
 
         // YOUTUBE //
         var youtubeRegex = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/ ]{11})/i;
@@ -134,7 +134,6 @@
 
         insereMessage(data.login, data.message, data.date);
       });
-
 
       socket.on('login', function(login, users) {
         if (currentLogin != login) {

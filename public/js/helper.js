@@ -10,17 +10,17 @@ function getNbUsers(nbUsers) {
 
 function getUsers(users) {
   $('#users li').hide();
-    for (i = 0; i < users.length; i++) {
-      $('#users').prepend('<li class="' + users[i] + '"><img src="http://api.adorable.io/avatar/32/' + users[i] + '" alt=""/><span>' + users[i] + '</span></li>');
+  for (i = 0; i < users.length; i++) {
+    $('#users').prepend('<li class="' + users[i] + '"><img src="http://api.adorable.io/avatar/32/' + users[i] + '" alt=""/><span>' + users[i] + '</span></li>');
   }
   $('#users li.' + currentLogin).hide();
 }
 
 function insereMessage(login, message) {
   if (currentLogin == login) {
-    $('#messages').append('<li class="current"><p>' + message + '</p><div id="message-info"><span>['+ date() +']</span><img src="http://api.adorable.io/avatar/32/' + login + '" alt="" /></div></li>');
+    $('#messages').append('<li class="current"><p>' + message + '</p><div id="message-info"><span>[' + date() + ']</span><img src="http://api.adorable.io/avatar/32/' + login + '" alt="" /></div></li>');
   } else {
-    $('#messages').append('<li><p>' + message + '</p><div id="message-info"><span>' + login + ' ['+ date() +']</span><img src="http://api.adorable.io/avatar/32/' + login + '" alt="" /></div></li>');
+    $('#messages').append('<li><p>' + message + '</p><div id="message-info"><span>' + login + ' [' + date() + ']</span><img src="http://api.adorable.io/avatar/32/' + login + '" alt="" /></div></li>');
   }
 }
 
@@ -38,14 +38,6 @@ function date() {
   return time;
 }
 
-function modifierMessage(txt) {
-  txt = txt.replace(new RegExp(":\\)", "gi"), '<img src="https://az545221.vo.msecnd.net/skype-faq-media/faq_content/skype/screenshots/fa12330/emoticons/smile_20.png" alt=":)" />');
-  txt = txt.replace(new RegExp(":=\\)", "gi"), '<img src="https://az545221.vo.msecnd.net/skype-faq-media/faq_content/skype/screenshots/fa12330/emoticons/smile_20.png" alt=":=)" />');
-  txt = txt.replace(new RegExp(":-\\)", "gi"), '<img src="https://az545221.vo.msecnd.net/skype-faq-media/faq_content/skype/screenshots/fa12330/emoticons/smile_20.png" alt=":-)" />');
-
-  txt = txt.replace(new RegExp(":\\(", "gi"), '<img src="https://az545221.vo.msecnd.net/skype-faq-media/faq_content/skype/screenshots/fa12330/emoticons/sadsmile_20.png" alt=":(" />');
-  txt = txt.replace(new RegExp(":=\\(", "gi"), '<img src="https://az545221.vo.msecnd.net/skype-faq-media/faq_content/skype/screenshots/fa12330/emoticons/sadsmile_20.png" alt=":=(" />');
-  txt = txt.replace(new RegExp(":-\\(", "gi"), '<img src="https://az545221.vo.msecnd.net/skype-faq-media/faq_content/skype/screenshots/fa12330/emoticons/sadsmile_20.png" alt=":-(" />');
-
-  return txt;
+function editMessage(txt) {
+  return emojione.shortnameToImage(txt);
 }

@@ -6,9 +6,8 @@ var bodyParser = require('body-parser');
 var ent        = require('ent');
 var path       = require('path');
 var md5        = require('MD5');
+var mongoose   = require('mongoose');
 
-
-var mongoose = require('mongoose');
 mongoose.connect('mongodb://127.0.0.1:27017/chat-express');
 
 var userSchema = new mongoose.Schema({ 
@@ -150,7 +149,7 @@ io.on('connection', function(socket) {
         io.emit('login', login, users);
     });
 
-
+    // Utilisateur déconnecté
     socket.on('disconnect', function() {
         if (loggedUser !== undefined) {
             login = loggedUser;
@@ -184,7 +183,7 @@ io.on('connection', function(socket) {
     });
 
 
-    // Arrêtre de rédiger un message
+    // Arrête de rédiger un message
     socket.on('stopTyping', function(login) {
         var typingUserIndex = typingUsers.indexOf(login);
         if (typingUserIndex !== -1) {

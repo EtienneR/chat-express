@@ -9,7 +9,8 @@
     "ent": "*",
     "body-parser": "*",
     "mongoose": "*",
-    "MD5": "*"
+    "MD5": "*",
+    "emojione": "~1.4.0"
   },
   "devDependencies": {
     "gulp": "^3.8.11",
