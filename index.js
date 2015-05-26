@@ -32,29 +32,33 @@ app.get('/', function(req, res) {
 
 
 app.post('/', function(req, res) {
-    var login    = req.body.login;
-    var password = req.body.password;
+  var login    = req.body.login;
+  var password = req.body.password;
 
-    if (login && password) {
+  if (login && password) {
 
-        // Vérification login + password
-        Users.findOne({login: login, password: md5(password) }, function(err, Users) {
-            if (Users == null) {
-                res.render(__dirname + '/views/index.ejs', { error: 'mauvais identifiant', login: login }, function(err, html) {
-                    res.send(html);
-                });
-            } else {
-                res.render(__dirname + '/views/chat.ejs', { login: login }, function(err, html) {
-                    res.send(html);
-                });
-            }
-        });
-
-    } else {
-        res.render(__dirname + '/views/index.ejs', { error: 'Merci de remplir tous les champs', login: login }, function(err, html) {
+    // Vérification login + password
+    Users.findOne({ login: login, password: md5(password) }, function(err, users) {
+      if (users == null) {
+        res.render(__dirname + '/views/index.ejs', { error: 'mauvais identifiant', login: login }, function(err, html) {
             res.send(html);
         });
-    }
+      } else {
+        // Récupération des autres utilisateurs
+        Users.find({ "login": {$ne: login }}, function(err, contacts) {
+          res.render(__dirname + '/views/chat.ejs', { login: login, contacts: contacts }, function(err, html) {
+              res.send(html);
+          });
+        });
+
+      }
+    });
+
+  } else {
+    res.render(__dirname + '/views/index.ejs', { error: 'Merci de remplir tous les champs', login: login }, function(err, html) {
+        res.send(html);
+    });
+  }
 
 });
 
