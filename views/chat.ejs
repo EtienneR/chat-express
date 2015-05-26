@@ -6,34 +6,127 @@
     <title>Socket.IO chat</title>
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/emojione.min.css" />
+    <style>
+  .dropdown-menu {
+      list-style: none;
+      padding: .3em 0 0;
+      margin: 0;
+      border: 1px solid #6E6E6E;
+      background-color: white;
+      border-radius: 5px;
+      overflow: hidden;
+      font-size: inherit;
+      letter-spacing: .025em;
+      box-shadow: 3px 3px 3px rgba(0,0,0,.2);
+    }
+    .dropdown-menu a:hover {
+      cursor: pointer;
+    }
+    .dropdown-menu li {
+      letter-spacing: 0;
+      display: block;
+      float: none;
+      margin: 0;
+      padding: 0;
+      border:none;
+    }
+    .dropdown-menu li:before {
+      display: none;
+    }
+    .dropdown-menu .textcomplete-footer {
+      margin-top: .3em;
+      background: #e6e6e6;
+    }
+    .dropdown-menu .textcomplete-footer a {
+      color: #999999;
+      text-decoration: none;
+      text-transform: uppercase;
+      letter-spacing: .05em;
+      line-height: 2.1818em;
+      padding-left: 1.8181em;
+      font-size: .84em;
+    }
+    .dropdown-menu .textcomplete-footer .arrow {
+      margin-left: .8em;
+      font-size: 1.3em;
+    }
+    .dropdown-menu li .emojione {
+      vertical-align: middle;
+      font-size: 1.23em;
+      width: 1em;
+      height: 1em;
+      top: -1px;
+      margin: 0 .3em 0 0;
+    }
+    .dropdown-menu li a {
+      display: block;
+      height: 100%;
+      line-height: 1.8em;
+      padding: 0 1.54em 0 .615em;
+      color: #4f4f4f;
+    }
+    .dropdown-menu .active,
+    .dropdown-menu li:hover {
+      background: #6E6E6E;
+      color: white;
+    }
+    .dropdown-menu .active a,
+    .dropdown-menu li:hover a {
+      color: inherit;
+    }
+</style>
   </head>
   <body>
 
-    <section id="left">
+	<section id="contact">
+		<div class="fixed">
 
-      <nav>
-        <img src="http://api.adorable.io/avatar/32/<%= login %>" alt="" />
-        <i><b><%= login %></b></i>
-        <br /><a href="/" id="logout">Logout</a>
-      </nav>
+			<div class="header">
+				<img src="http://api.adorable.io/avatar/64/<%= login %>" alt="" />
+				<span class="contact">
+					<b><%= login %></b>
+				</span>
 
-      <ul id="users"></ul>
+				<span style="position: absolute; right: 8px; top: 40px; font-size: 0.85em;"><a href="/" id="logout">Logout</a></span>
+			</div>
 
+			<div class="content">
+				<ul id="contacts">
+					<% for(var i=0; i<contacts.length; i++) {%>
+					<li class="<%= contacts[i]['login'] %>">
+						<img src="http://api.adorable.io/avatar/64/<%= contacts[i]['login'] %>" alt="" />
+						<span class="contact <%= contacts[i]['login'] %>">
+							<span class="pseudo"><%= contacts[i]['login'] %></span>
+							<span class="status offline"></span>
+							<span class="more">offline</span>
+						</span>
+					</li>
+					<% } %>
+				</ul>
+			</div>
+
+		</div>
     </section>
 
     <section id="chat">
-      <ul id="messages">
-      </ul>
-    </section>
 
-    <form action="">
-      <ul id="info"></ul>
-      <input type="search" id="m" autocomplete="off" placeholder="Entrez votre message" required />
-    </form>
+   		<div class="content">
+      		<ul id="messages"></ul>
+      	</div>
 
-    <script src="js/emojione.min.js"></script>
-    <script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
+    	<div id="form">
+			<div id="info"></div>
+			<form action="">
+				<input type="text" id="m" placeholder="Type your message here" required />
+			</form>
+		</div>
+	</section>
+
     <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
+    <script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
+    <script src="js/emojione.min.js"></script>
+    <script src="js/emoji.js"></script>
+    <script src="js/jquery.textcomplete.min.js"></script>
     <script src="https://platform.vine.co/static/scripts/embed.js"></script>
     <script src="js/helper.js"></script>
     <script>
@@ -44,6 +137,49 @@
       var typingTimer;
 
       socket.emit('login', login);
+
+      // Afficher les emojis en autocompletion
+      $("input").textcomplete([ {
+      match: /\B:([\-+\w]*)$/,
+        search: function (term, callback) {
+            var results = [];
+            var results2 = [];
+            var results3 = [];
+            $.each(emojiStrategy,function(shortname,data) {
+              if(shortname.indexOf(term) > -1) { results.push(shortname); }
+              else {
+                  if((data.aliases !== null) && (data.aliases.indexOf(term) > -1)) {
+                      results2.push(shortname);
+                  }
+                  else if((data.keywords !== null) && (data.keywords.indexOf(term) > -1)) {
+                      results3.push(shortname);
+                  }
+              } 
+            });
+
+            if(term.length >= 3) {
+              results.sort(function(a,b) { return (a.length > b.length); });
+              results2.sort(function(a,b) { return (a.length > b.length); });
+              results3.sort();
+            }
+            var newResults = results.concat(results2).concat(results3);
+
+            callback(newResults);
+        },
+        template: function (shortname) {
+          return '<img class="emojione" src="//cdn.jsdelivr.net/emojione/assets/png/' + emojiStrategy[shortname].unicode + '.png"> :' + shortname + ':';
+          //return '<img src="img/emojis/' + emojiStrategy[shortname].unicode + '.png"></img>' + shortname;
+        },
+        replace: function (shortname) {
+          return ':'+shortname+': ';
+        },
+        index: 1,
+        maxCount: 10
+      }
+      ],{
+        footer: '<a href="http://www.emoji.codes" target="_blank">Browse All<span class="arrow">»</span></a>'
+      });
+
 
       // En cours de rédaction
       $('#m').keypress(function() {
@@ -90,7 +226,7 @@
         var youtubeRegex = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/ ]{11})/i;
         var youtubeId = url.match(youtubeRegex);
         if (!!youtubeId) {
-          data.message = '<iframe width="420" height="315" src="https://www.youtube.com/embed/' + youtubeId[1] + '" frameborder="0" allowfullscreen></iframe>';
+          data.message = '<div class="video"><div class="embed-container"><p><iframe src="https://www.youtube.com/embed/' + youtubeId[1] + '" frameborder="0" allowfullscreen></iframe></p></div></div>';
         }
 
         // VIMEO //
@@ -151,15 +287,20 @@
           $('#messages').append('<li>['+ date() +'] <-- <em>*' + login + ' a quitté le Chat :(</em></li>');
         }
 
+	    $('span.' + login + ' > span.status').removeClass('online');
+    	$('span.' + login + ' > span.status').addClass('offline');
+    	$('span.' + login + ' > span.more').hide();
+    	$('span.' + login).append('<span class="more">offline</span>');
+
         getNbUsers(users.length);
         getUsers(users);
       });
 
       socket.on('updateTyping', function (typingUsers, login) {
         if (currentLogin != login) {
-          $('ul#info li').hide();
+          $('#info p').hide();
           for (i = 0; i < typingUsers.length; i++) {
-            $('#info').append('<li>' + typingUsers + ' is typing...</li>');
+            $('#info').append('<p>' + typingUsers + ' is typing...</p>');
           }
         }
       });

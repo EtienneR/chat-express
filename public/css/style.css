@@ -1,158 +1,253 @@
-* {
+/* http://meyerweb.com/eric/tools/css/reset/ 
+   v2.0 | 20110126
+   License: none (public domain)
+*/
+
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed, 
+figure, figcaption, footer, header, hgroup, 
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
 	margin: 0;
 	padding: 0;
-	box-sizing: border-box;
+	border: 0;
+	font-size: 100%;
+	font: inherit;
+	vertical-align: baseline;
 }
-
-ul li {
-	list-style-type: none;
-}
-
-body {
-	background: #F1F5F8;
-	font: 13px Helvetica, Arial;
-	margin: 0 5%;
-	width: 90%
-}
-
-nav {
-	border-bottom: 1px solid #000;
+/* HTML5 display-role reset for older browsers */
+article, aside, details, figcaption, figure, 
+footer, header, hgroup, menu, nav, section {
 	display: block;
-	margin-bottom: 10px;
-	padding-bottom: 10px;
+}
+body {
+	line-height: 1;
+}
+ol, ul {
+	list-style: none;
+}
+blockquote, q {
+	quotes: none;
+}
+blockquote:before, blockquote:after,
+q:before, q:after {
+	content: '';
+	content: none;
+}
+table {
+	border-collapse: collapse;
 }
 
-section#left{
-	position: fixed;
-	left: 5%;
-	top: 2%;
-	width: 10%;
+
+body{
+	font-family: arial;
 }
 
-section#left h2{
-	font-size: 1em;
+b{
+	font-weight: bold;
 }
 
-ul#users li span{
-	left: 48px;
-	margin-top: 12px;
-	position: absolute;
+section#contact{
+	background: #434753;
+	color: #fff;
+	width: 21%;
 }
 
 section#chat{
-	background: #fff;
-	margin-left: 15%;
-	margin-bottom: 50px;
-	width: 85%;
-}
-
-#info{
-	margin-bottom: 5px;
-}
-
-
-#messages{
-	list-style-type: none;
-	margin: 0;
-	padding: 0;
-}
-
-#messages li{
-	margin: 15px 0;
-	position: relative;
-}
-
-/*#messages li:nth-child(odd){
-	background: #eee; 
-}
-*/
-#messages li p,
-#message-info{
-	display: inline-block;
-}
-
-#messages li p{
-	background: #7BC4EF;
-	border-radius: 5px;
-	color: #fff;
-	padding: 1.75%;
-	font-size: 1.2em;
-	line-height: 1.8em;
-	width: 90%;
-}
-#messages li.current p{
-	background: #5fb471;
-	margin-left: 10%;
-}
-
-#messages li #message-info{
-	position: absolute;
-	text-align: center;
-	right: -10px;
-	width: 10%;
-}
-
-#messages li.current #message-info{
-	left: 0;
-	position: absolute;
-}
-
-#message-info span{
-	display: block;
-	margin-bottom: 5px;
-}
-
-#message-info img{
-	display: block;
-	margin: 0 auto;
-	text-align: center;
-}
-
-form{
-	bottom: 1px;
-	position: fixed;
-	left: 20%;
+	background: #F1F5F8;
 	width: 75%;
 }
 
-form input{
-	border: 1px solid #000;
+section{
+	float: left;
 	padding: 1%;
-	width: 98%;
+	position: relative;
+}
+
+section#contact a{
+	color: #fff;
+	text-decoration: none;
+}
+
+.header{
+	margin-bottom: 30px;
+	padding-bottom: 10px;
+}
+
+.header img,
+ul#contacts li img,
+span.contact{
+	display: inline-block;
+}
+
+.header img{
+	border: 3px solid green;
+}
+
+.header img,
+ul#contacts li img{
+	border-radius: 50%;
+}
+
+ul#contacts li img{
+	border: 3px solid #828690;
+}
+
+ul#contacts li {
+	position: relative;
+}
+
+span.contact{
+	position: absolute;
+	top: 20px;
+	margin-left: 6px;
+}
+
+.header span.contact{
+	top: 40px;
+}
+
+span.pseudo{
+	font-weight: bold;
+	display: block;
+	margin-bottom: 4px;
+}
+
+span.status{
+	width: 8px;
+	height: 8px;
+	display: inline-block;
+	border-radius: 50%;
+}
+
+span.online{
+	background: green;
+}
+span.offline{
+	background: red;
+}
+
+span.more{
+	color: #828690;
+}
+
+ul#contacts li{
+	margin: 25px 0;
+	padding: 5px 0;
+}
+
+ul#contacts li.current{
+	color: #000;
+	background: #F1F5F8;
+}
+
+ul#messages{
+	margin-bottom: 10%;
+}
+
+ul#messages li{
+	margin: 35px 0;
+}
+
+ul#messages li,
+ul#messages li.current{
+	position: relative;
+}
+
+ul#messages li p{
+	background: #62BF6E;
+	border-radius: 10px;
+	color: #fff;
+	padding: 15px;
+	line-height: 1.75em;
+	margin-top: 20px;
+}
+
+ul#messages li.me p{
+	background: #7BC4EF;
+}
+
+ul#messages li span{
+	margin-bottom: 5px;
+}
+
+ul#messages li span.about{
+	display: block;
+}
+
+ul#messages li.me span.about{
+	text-align: right;
+}
+
+#form{
+	background: #F1F5F8;
+	position: fixed;
+	bottom: 0;
+	padding: 1% 0;
+	width: 75%;
+}
+
+#form form{
+	background: #fff;
+	margin-top: 1%; 
+	width: 100%;
+}
+
+#form input{
+	border: none;
+	padding: 2%;
+	width: 96%;
+}
+
+.info{
+	font-size: 0.8em;
+	text-align: center;
+}
+
+.arrow-up {
+	position: absolute;
+	top: 21px;
+	width: 0; 
+	height: 0; 
+	border-left: 10px solid transparent;
+	border-right: 10px solid transparent;
+}
+
+.left {
+	left: 20px;
+	border-bottom: 15px solid #62BF6E;
+}
+.right {
+	right: 20px;
+	border-bottom: 15px solid #7BC4EF;
 }
 
 
-@media (max-width: 768px) {
-	section#left, section#chat{
-		margin: 0;
-		width: 100%;
-	}
+.fixed{
+	background: #434753;
+	position: fixed;
+	left: 0;
+	top: 0;
+	height: 100%;
+	width: 100%;
+	width: 21%;
+	padding: 1%;
+	overflow-y: scroll;
+}
 
-	section#left{
-		margin-bottom: 5px;
-		position: relative;
-		right: 0;
-	}
-
-	section#left ul li{
-		display: inline-block;
-		padding-right: 10px;
-	}
-
-	form{
-		left: 5%;
-		padding: 3px 0;
-		width: 100%;
-	}
-
-	form input{
-		font-size: 1em;
-		margin: 0;
-		padding: 5%;
-		width: 90%;
-	}
-
-	form button{
-		display: none;
-	}
+#test{
+	background: #F1F5F8;
+	position: fixed;
+	z-index: 1;
+	width: 100%;
+	padding: 1% 0;
+	top: 0;
 }
