@@ -9,6 +9,9 @@ Installer les dépendances :
 Lancer le serveur :  
 <code>node index</code>
 
+Ou avec Gulp :  
+<code>gulp</code>
+
 
 ## Frameworks
 
@@ -35,7 +38,7 @@ Lancer le serveur :
 * une vidéo Vimeo
 * une vidéo Dailymotion
 * une vidéo Vine
-- Ajout de quelques smileys
+* ajout d'emojis (http://emoji.codes)
 
 
 ## A corriger
