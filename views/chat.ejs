@@ -6,306 +6,193 @@
     <title>Socket.IO chat</title>
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/emojione.min.css" />
-    <style>
-  .dropdown-menu {
-      list-style: none;
-      padding: .3em 0 0;
-      margin: 0;
-      border: 1px solid #6E6E6E;
-      background-color: white;
-      border-radius: 5px;
-      overflow: hidden;
-      font-size: inherit;
-      letter-spacing: .025em;
-      box-shadow: 3px 3px 3px rgba(0,0,0,.2);
-    }
-    .dropdown-menu a:hover {
-      cursor: pointer;
-    }
-    .dropdown-menu li {
-      letter-spacing: 0;
-      display: block;
-      float: none;
-      margin: 0;
-      padding: 0;
-      border:none;
-    }
-    .dropdown-menu li:before {
-      display: none;
-    }
-    .dropdown-menu .textcomplete-footer {
-      margin-top: .3em;
-      background: #e6e6e6;
-    }
-    .dropdown-menu .textcomplete-footer a {
-      color: #999999;
-      text-decoration: none;
-      text-transform: uppercase;
-      letter-spacing: .05em;
-      line-height: 2.1818em;
-      padding-left: 1.8181em;
-      font-size: .84em;
-    }
-    .dropdown-menu .textcomplete-footer .arrow {
-      margin-left: .8em;
-      font-size: 1.3em;
-    }
-    .dropdown-menu li .emojione {
-      vertical-align: middle;
-      font-size: 1.23em;
-      width: 1em;
-      height: 1em;
-      top: -1px;
-      margin: 0 .3em 0 0;
-    }
-    .dropdown-menu li a {
-      display: block;
-      height: 100%;
-      line-height: 1.8em;
-      padding: 0 1.54em 0 .615em;
-      color: #4f4f4f;
-    }
-    .dropdown-menu .active,
-    .dropdown-menu li:hover {
-      background: #6E6E6E;
-      color: white;
-    }
-    .dropdown-menu .active a,
-    .dropdown-menu li:hover a {
-      color: inherit;
-    }
-</style>
   </head>
   <body>
 
-	<section id="contact">
-		<div class="fixed">
+  <section id="contact">
+    <div class="fixed">
 
-			<div class="header">
-				<img src="http://api.adorable.io/avatar/64/<%= login %>" alt="" />
-				<span class="contact">
-					<b><%= login %></b>
-				</span>
+      <div class="header">
+        <img src="http://api.adorable.io/avatar/64/<%= login %>" alt="" />
+        <span class="contact">
+          <b><%= login %></b>
+        </span>
 
-				<span style="position: absolute; right: 8px; top: 40px; font-size: 0.85em;"><a href="/" id="logout">Logout</a></span>
-			</div>
+        <span style="position: absolute; right: 8px; top: 40px; font-size: 0.85em;"><a href="/" id="logout">Logout</a></span>
+      </div>
 
-			<div class="content">
-				<ul id="contacts">
-					<% for(var i=0; i<contacts.length; i++) {%>
-					<li class="<%= contacts[i]['login'] %>">
-						<img src="http://api.adorable.io/avatar/64/<%= contacts[i]['login'] %>" alt="" />
-						<span class="contact <%= contacts[i]['login'] %>">
-							<span class="pseudo"><%= contacts[i]['login'] %></span>
-							<span class="status offline"></span>
-							<span class="more">offline</span>
-						</span>
-					</li>
-					<% } %>
-				</ul>
-			</div>
+      <div class="content">
+        <ul id="contacts">
+          <% for(var i=0; i<contacts.length; i++) {%>
+          <li class="<%= contacts[i]['login'] %>">
+            <img src="http://api.adorable.io/avatar/64/<%= contacts[i]['login'] %>" alt="" />
+              <span class="contact <%= contacts[i]['login'] %>">
+              <span class="pseudo"><%= contacts[i]['login'] %></span>
+              <span class="status offline"></span>
+              <span class="more">offline</span>
+            </span>
+          </li>
+          <% } %>
+        </ul>
+      </div>
 
-		</div>
-    </section>
+    </div>
+  </section>
 
-    <section id="chat">
+  <section id="chat">
 
-   		<div class="content">
-      		<ul id="messages"></ul>
-      	</div>
+    <div class="content">
+      <ul id="messages"></ul>
+    </div>
 
-    	<div id="form">
-			<div id="info"></div>
-			<form action="">
-				<input type="text" id="m" placeholder="Type your message here" required />
-			</form>
-		</div>
-	</section>
+    <div id="form">
+      <div id="info"></div>
+        <form action="">
+          <input type="text" id="m" placeholder="Type your message here" required />
+        </form>
+    </div>
+  </section>
 
-    <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
-    <script src="js/socket.io-1.2.0.js"></script>
-    <script src="js/emojione.min.js"></script>
-    <script src="js/emoji.js"></script>
-    <script src="js/jquery.textcomplete.min.js"></script>
-    <script src="https://platform.vine.co/static/scripts/embed.js"></script>
-    <script src="js/helper.js"></script>
-    <script>
-      var socket       = io();
-      var login        = "<%= login %>";
-      var currentLogin = login;
-      var isTyping     = false;
-      var typingTimer;
+  <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
+  <script src="js/socket.io-1.2.0.js"></script>
+  <script src="js/emojione.min.js"></script>
+  <script src="https://platform.vine.co/static/scripts/embed.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/helper.js"></script>
+  <script>
+    var socket       = io();
+    var login        = "<%= login %>";
+    var currentLogin = login;
+    var isTyping     = false;
+    var typingTimer;
 
-      socket.emit('login', login);
+    socket.emit('login', login);
 
-      // Afficher les emojis en autocompletion
-      $("input").textcomplete([ {
-      match: /\B:([\-+\w]*)$/,
-        search: function (term, callback) {
-            var results = [];
-            var results2 = [];
-            var results3 = [];
-            $.each(emojiStrategy,function(shortname,data) {
-              if(shortname.indexOf(term) > -1) { results.push(shortname); }
-              else {
-                  if((data.aliases !== null) && (data.aliases.indexOf(term) > -1)) {
-                      results2.push(shortname);
-                  }
-                  else if((data.keywords !== null) && (data.keywords.indexOf(term) > -1)) {
-                      results3.push(shortname);
-                  }
-              } 
-            });
-
-            if(term.length >= 3) {
-              results.sort(function(a,b) { return (a.length > b.length); });
-              results2.sort(function(a,b) { return (a.length > b.length); });
-              results3.sort();
-            }
-            var newResults = results.concat(results2).concat(results3);
-
-            callback(newResults);
-        },
-        template: function (shortname) {
-          return '<img class="emojione" src="//cdn.jsdelivr.net/emojione/assets/png/' + emojiStrategy[shortname].unicode + '.png"> :' + shortname + ':';
-          //return '<img src="img/emojis/' + emojiStrategy[shortname].unicode + '.png"></img>' + shortname;
-        },
-        replace: function (shortname) {
-          return ':'+shortname+': ';
-        },
-        index: 1,
-        maxCount: 10
+    // En cours de rédaction
+    $('#m').keypress(function() {
+      clearTimeout(typingTimer);
+      if (!isTyping) {
+      socket.emit('startTyping', login);
+        isTyping = true;
       }
-      ],{
-        footer: '<a href="http://www.emoji.codes" target="_blank">Browse All<span class="arrow">»</span></a>'
-      });
+    });
 
-
-      // En cours de rédaction
-      $('#m').keypress(function() {
-        clearTimeout(typingTimer);
-        if (!isTyping) {
-        socket.emit('startTyping', login);
-          isTyping = true;
+    // Arrete d'écrire
+    $('#m').keyup(function() {
+      clearTimeout(typingTimer);
+      typingTimer = setTimeout(function() {
+        if (isTyping) {
+          socket.emit('stopTyping', login);
+          isTyping = false;
         }
-      });
+      }, 500)
+    });
 
-      // Arrete d'écrire
-      $('#m').keyup(function() {
-        clearTimeout(typingTimer);
-        typingTimer = setTimeout(function() {
-          if (isTyping) {
-            socket.emit('stopTyping', login);
-            isTyping = false;
-          }
-        }, 500)
-      });
+    // Déconnexion
+    $('a#logout').click(function() {
+      socket.emit('disconnect');
+    });
 
-      // Déconnexion
-      $('a#logout').click(function() {
-        socket.emit('disconnect');
-      });
+    // Envoi d'un message
+    $('form').submit(function() {
+      scrollAuto();
+      message = $('#m').val();
+      socket.emit('newMessage', message, login);
+      $('#m').val('');
+      return false;
+    });
 
-      // Envoi d'un message
-      $('form').submit(function() {
-        scrollAuto();
-        message = $('#m').val();
-        socket.emit('newMessage', message, login);
-        $('#m').val('');
-        return false;
-      });
+    // Lecture du message
+    socket.on('newMessage', function(data) {
+      scrollAuto();
+      var url = data.message;
 
-      // Lecture du message
-      socket.on('newMessage', function(data) {
-        scrollAuto();
-        var url = data.message;
+      data.message = editMessage(url);
 
-        data.message = editMessage(url);
+      // YOUTUBE //
+      var youtubeRegex = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/ ]{11})/i;
+      var youtubeId = url.match(youtubeRegex);
+      if (!!youtubeId) {
+        data.message = '<div class="video"><div class="embed-container"><p><iframe src="https://www.youtube.com/embed/' + youtubeId[1] + '" frameborder="0" allowfullscreen></iframe></p></div></div>';
+      }
 
-        // YOUTUBE //
-        var youtubeRegex = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/ ]{11})/i;
-        var youtubeId = url.match(youtubeRegex);
-        if (!!youtubeId) {
-          data.message = '<div class="video"><div class="embed-container"><p><iframe src="https://www.youtube.com/embed/' + youtubeId[1] + '" frameborder="0" allowfullscreen></iframe></p></div></div>';
-        }
+      // VIMEO //
+      var vimeoRegex = /(?:vimeo\.com\/(\d+))/i;
+      var vimeoId = url.match(vimeoRegex);
+      if (!!vimeoId) {
+        data.message = '<iframe src="https://player.vimeo.com/video/' + vimeoId[1] + '" width="500" height="281" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>';
+      }
 
-        // VIMEO //
-        var vimeoRegex = /(?:vimeo\.com\/(\d+))/i;
-        var vimeoId = url.match(vimeoRegex);
-        if (!!vimeoId) {
-          data.message = '<iframe src="https://player.vimeo.com/video/' + vimeoId[1] + '" width="500" height="281" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>';
-        }
+      // DAILYMOTION //
+      var dailymotionRegex = /^.+dailymotion.com\/(video|hub)\/([^_]+)[^#]*(#video=([^_&]+))?/;
+      var dailymotionId = url.match(dailymotionRegex);
+      if (!!dailymotionId) {
+        data.message = '<iframe frameborder="0" width="480" height="270" src="//www.dailymotion.com/embed/video/' + dailymotionId[2] + '" allowfullscreen></iframe>';
+      }
 
-        // DAILYMOTION //
-        var dailymotionRegex = /^.+dailymotion.com\/(video|hub)\/([^_]+)[^#]*(#video=([^_&]+))?/;
-        var dailymotionId = url.match(dailymotionRegex);
-        if (!!dailymotionId) {
-          data.message = '<iframe frameborder="0" width="480" height="270" src="//www.dailymotion.com/embed/video/' + dailymotionId[2] + '" allowfullscreen></iframe>';
-        }
+      var dailymotionRegexMini = /(?:dai\.ly\/([^_]+)[^#]*)/i;
+      var dailymotionIdMini = url.match(dailymotionRegexMini);
+      if (!!dailymotionIdMini) {
+        data.message = '<iframe frameborder="0" width="480" height="270" src="//www.dailymotion.com/embed/video/' + dailymotionIdMini[1] + '" allowfullscreen></iframe>';
+      }
 
-        var dailymotionRegexMini = /(?:dai\.ly\/([^_]+)[^#]*)/i;
-        var dailymotionIdMini = url.match(dailymotionRegexMini);
-        if (!!dailymotionIdMini) {
-          data.message = '<iframe frameborder="0" width="480" height="270" src="//www.dailymotion.com/embed/video/' + dailymotionIdMini[1] + '" allowfullscreen></iframe>';
-        }
+      // VINE
+      var vineRegex = /(?:vine\.co\/v\/([^_]+)[^#]*)/i;
+      var vineId = url.match(vineRegex);
+      if (!!vineId) {
+        data.message = '<iframe src="https://vine.co/v/' + vineId[1] + '/embed/postcard" width="300" height="300" frameborder="0"></iframe>';
+      }
 
-        // VINE
-        var vineRegex = /(?:vine\.co\/v\/([^_]+)[^#]*)/i;
-        var vineId = url.match(vineRegex);
-        if (!!vineId) {
-          data.message = '<iframe src="https://vine.co/v/' + vineId[1] + '/embed/postcard" width="300" height="300" frameborder="0"></iframe>';
-        }
+      // IMAGES
+      var imageRegex = /\.(gif|jpg|jpeg|tiff|png)$/i;
+      var image = url.match(imageRegex);
+      if (!!image) {
+        data.message = '<a href="' + image["input"] + '" target="_blank"><img src="' + image["input"] + '" alt="" width="120px" /></a>';
+      }
 
-        // IMAGES
-        var imageRegex = /\.(gif|jpg|jpeg|tiff|png)$/i;
-        var image = url.match(imageRegex);
-        if (!!image) {
-          data.message = '<a href="' + image["input"] + '" target="_blank"><img src="' + image["input"] + '" alt="" width="120px" /></a>';
-        }
-
-        // LINK
+      // LINK
 /*        var linkRegex = /^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/;
-        var link = url.match(linkRegex);
-        if (!!link) {
-          data.message = '<a href="' + link[0] + '" target="_blank">' + link[0] + '</a>';
-        }*/
+      var link = url.match(linkRegex);
+      if (!!link) {
+        data.message = '<a href="' + link[0] + '" target="_blank">' + link[0] + '</a>';
+      }*/
 
-        insereMessage(data.login, data.message, data.date);
-      });
+      insereMessage(data.login, data.message, data.date);
+    });
 
-      socket.on('login', function(login, users) {
-        if (currentLogin != login) {
-          $('#messages').append('<li>['+ date() +'] --> <em>' + login + ' a rejoint le Chat !</em></li>');
+    socket.on('login', function(login, users) {
+      if (currentLogin != login) {
+        $('#messages').append('<li>['+ date() +'] --> <em>' + login + ' a rejoint le Chat !</em></li>');
+      }
+
+      getNbUsers(users.length);
+      getUsers(users);
+    });
+
+    socket.on('logout', function(login, users) {
+      if (currentLogin != login) {
+        $('#messages').append('<li>['+ date() +'] <-- <em>*' + login + ' a quitté le Chat :(</em></li>');
+      }
+
+    $('span.' + login + ' > span.status').removeClass('online');
+  	$('span.' + login + ' > span.status').addClass('offline');
+  	$('span.' + login + ' > span.more').hide();
+  	$('span.' + login).append('<span class="more">offline</span>');
+
+      getNbUsers(users.length);
+      getUsers(users);
+    });
+
+    socket.on('updateTyping', function (typingUsers, login) {
+      if (currentLogin != login) {
+        $('#info p').hide();
+        for (i = 0; i < typingUsers.length; i++) {
+          $('#info').append('<p>' + typingUsers + ' is typing...</p>');
         }
+      }
+    });
 
-        getNbUsers(users.length);
-        getUsers(users);
-      });
-
-      socket.on('logout', function(login, users) {
-        if (currentLogin != login) {
-          $('#messages').append('<li>['+ date() +'] <-- <em>*' + login + ' a quitté le Chat :(</em></li>');
-        }
-
-	    $('span.' + login + ' > span.status').removeClass('online');
-    	$('span.' + login + ' > span.status').addClass('offline');
-    	$('span.' + login + ' > span.more').hide();
-    	$('span.' + login).append('<span class="more">offline</span>');
-
-        getNbUsers(users.length);
-        getUsers(users);
-      });
-
-      socket.on('updateTyping', function (typingUsers, login) {
-        if (currentLogin != login) {
-          $('#info p').hide();
-          for (i = 0; i < typingUsers.length; i++) {
-            $('#info').append('<p>' + typingUsers + ' is typing...</p>');
-          }
-        }
-      });
-
-    </script>
+  </script>
 
   </body>
 </html>
